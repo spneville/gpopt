@@ -4,6 +4,7 @@ and the optimiser
 """
 import sys as sys
 import numpy as np
+import gpopt.sampling.sampling as sampling
 
 class Driver:
     def __init__(self, geom):
@@ -11,21 +12,16 @@ class Driver:
         Driver class object constructor
         """
 
-        # Input geometry
-        atom_lbl = [geom[i][0] for i in range(len(geom))]
-        X0       = []
-        [X0.append(geom[i][1:][0][j]) for i in range(len(geom))
-         for j in range(3)]
-        X0       = np.array(X0)
-
-        self.X0       = X0
-        self.atom_lbl = atom_lbl
-
+        # Initial geometry
+        self.X0 = geom
+        
         # Training set {(X_i, E_i)}
         self.ntrain    = 0
         self.train_set = None
+
+        # Preliminary sampling
+        self.nprelim = 25
         
-    
     def run(self):
         """
         Runs a geometry optimisation using a GPR surrogate
@@ -33,6 +29,6 @@ class Driver:
         """
 
         # preliminary sampling of points
-        sys.exit()
+        X, E = sampling.pre_sample(self.X0, self.nprelim)
         
         return
