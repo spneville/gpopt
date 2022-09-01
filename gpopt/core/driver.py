@@ -13,7 +13,7 @@ class Driver:
         """
 
         # Initial geometry
-        self.X0 = geom
+        self.geom0 = geom
         
         # Training set {(X_i, E_i)}
         self.ntrain    = 0
@@ -28,7 +28,9 @@ class Driver:
         potential constructed on-the-fly
         """
 
-        # preliminary sampling of points
-        X, E = sampling.pre_sample(self.X0, self.nprelim)
+        # Preliminary sampling of points
+        X, E = sampling.pre_sample(self.geom0, self.nprelim)
+
+        # Construct the GPR object
         
         return
