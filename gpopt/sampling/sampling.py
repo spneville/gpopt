@@ -12,7 +12,7 @@ from pyscf import hessian
 from pyscf.hessian import thermo
 
 
-def pre_sample(geom0, nsample):
+def pre_sample(geom0, nsample, norm_bound):
     """
     Pre-sampling of geometries and energies using provided
     normal modes + frequencies
@@ -56,17 +56,19 @@ def pre_sample(geom0, nsample):
     modes_obj = modes.Modes(x0, ncoo, nmodes, mass, freq, qcoo)
 
     # Coordinates: uniformly sampled normal mode vectors with lengths uniformly
-    #              drawn from [0,a]
+    #              drawn from [0, norm_bound]
     X = []
-    a = 2.
-    length = np.random.uniform(0., a, (nsample))
+    Q = []
+    length = np.random.uniform(0., norm_bound, (nsample))
     qpt    = np.random.uniform(0., 1., (nsample, modes_obj.nmodes))    
     qpt_norm = np.array([qpt[i] * (length[i] / np.linalg.norm(qpt[i]))
                          for i in range(nsample)])
     for i in range(nsample):
         X.append(modes_obj.q2x(qpt_norm[i]))
+        Q.append(qpt_norm[i])
     X = np.array(X)
-        
+    Q = np.array(Q)
+    
     # Energies
     E = []
     for i in range(nsample):
@@ -82,5 +84,5 @@ def pre_sample(geom0, nsample):
         print('Geom ', i, 'E (eV) = ', (E[i]-E0)*27.2114)
         
     E = np.array(E)
-        
-    return X, E
+
+    return Q, (E - E0)*27.2114, modes_obj
