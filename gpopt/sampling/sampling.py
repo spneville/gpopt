@@ -69,7 +69,7 @@ def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
         mf.xc = 'b3lyp'
         E.append(mf.kernel())
 
-        print('Geom ', i, 'E (eV) = ', (E[i]-E0) * constants.eh2ev)
+        print('Geom ', i+1, 'E (eV) = ', (E[-1]-E0) * constants.eh2ev)
         
     E = np.array(E)
     
