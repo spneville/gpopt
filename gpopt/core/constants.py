@@ -2,6 +2,13 @@
 Sundry often used constants
 """
 
+# unit conversions
+ang2bohr=1.88972612
+invcm2ev=1.23985e-4
+eh2ev=27.2113845
+mu2me=1822.888486
+au2wn=219474.63068
+
 # atomic masses
 atom_name = ['X' ,'H' , 'He', 'Li', 'Be', 'B' , 'C' , 'N' , 'O' , 'F' ,
              'Ne','Na', 'Mg', 'Al', 'Si', 'P' , 'S' , 'Cl', 'Ar', 'K' ,

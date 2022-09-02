@@ -14,6 +14,9 @@ class Modes():
         # Cartesian coordinates (Angstrom)
         self.x0     = x0
 
+        # Numer of atoms
+        self.natm   = int(x0.size / 3)
+        
         # Number of normal modes and Cartesian coordinates
         self.nmodes = nmodes
         self.ncoo   = ncoo

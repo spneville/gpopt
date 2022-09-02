@@ -7,6 +7,7 @@ import numpy as np
 import sklearn.gaussian_process as gp
 import gpopt.sampling.sampling as sampling
 import gpopt.gpr.surrogate as surrogate
+import gpopt.coord.hessian as hessian
 
 class Driver:
     def __init__(self, geom):
@@ -31,18 +32,19 @@ class Driver:
         potential constructed on-the-fly
         """
 
+        # Initial, approximate normal modes
+        mode_obj = hessian.modes_pyscf(self.geom0)
+
+        
         # Preliminary sampling of points
-        Q, E, mode_obj = sampling.pre_sample(self.geom0, self.nprelim,
-                                             self.norm_bound)
+        Q, E = sampling.pre_sample(mode_obj, self.geom0,
+                                   self.nprelim, self.norm_bound)
 
         # Characteristic lengths
         char_lengths = np.array([1.
                                  for i in range(mode_obj.nmodes)])
         
         # Construct the GPR object
-        #gpr_obj = surrogate.Surrogate(mode_obj, Q, E, char_lengths)
-
-
         kernel = 1 * gp.kernels.RBF(length_scale=char_lengths,
                                     length_scale_bounds=(1e-2, 1e2))
 
@@ -55,9 +57,9 @@ class Driver:
 
 
         # Test
-        Q_test, E_test, mode_obj_test = sampling.pre_sample(self.geom0,
-                                                            100,
-                                                            self.norm_bound)
+        Q_test, E_test = sampling.pre_sample(mode_obj, self.geom0,
+                                             100, self.norm_bound,
+                                             inc_Q0=False)
 
         mean_prediction, std_prediction = \
             gaussian_process.predict(Q_test, return_std=True)
