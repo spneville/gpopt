@@ -39,7 +39,7 @@ class Modes():
         transformation matrices
         """
         
-        fac = np.array([15.4644*np.sqrt(self.freq[i]*self.mass[j])
+        fac = np.array([15.4644*np.sqrt(np.abs(self.freq[i])*self.mass[j])
                         for i in range(self.nmodes)
                         for j in range(self.ncoo)])
         fac = fac.reshape(self.nmodes,self.ncoo)

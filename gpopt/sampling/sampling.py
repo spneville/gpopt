@@ -7,8 +7,6 @@ import numpy as np
 import gpopt.core.constants as constants
 from pyscf import gto
 from pyscf import dft
-from pyscf import hessian
-from pyscf.hessian import thermo
 
 
 def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
@@ -73,4 +71,4 @@ def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
         
     E = np.array(E)
     
-    return Q, (E - E0)*constants.eh2ev
+    return Q, (E - E0)*constants.eh2ev, E0
