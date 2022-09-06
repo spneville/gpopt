@@ -20,7 +20,7 @@ def modes_pyscf(geom0):
     mol         = gto.Mole()
     mol.verbose = 0
     mol.atom    = geom0
-    mol.basis   = '6-31g'
+    mol.basis   = 'sto-3g'
     mol.build()
 
     # Build and run the PySCF SCF object

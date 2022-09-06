@@ -15,7 +15,7 @@ def main():
 
     # run the geometry optimisation
     gpopt_driver = driver.Driver(geom)
-    gpopt_driver.run()
+    gpopt_driver.run(xyz_file)
     
     return
 

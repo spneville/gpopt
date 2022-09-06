@@ -29,7 +29,7 @@ def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
     X = []
     Q = []
     length = np.random.uniform(0., norm_bound, (nsample))
-    qpt    = np.random.uniform(0., 1., (nsample, modes_obj.nmodes))    
+    qpt    = np.random.uniform(-1., 1., (nsample, modes_obj.nmodes))    
     qpt_norm = np.array([qpt[i] * (length[i] / np.linalg.norm(qpt[i]))
                          for i in range(nsample)])
 
@@ -47,7 +47,7 @@ def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
     mol         = gto.Mole()
     mol.verbose = 0
     mol.atom    = geom0
-    mol.basis   = '6-31g'
+    mol.basis   = 'cc-pvdz'
     mol.build()
     mf    = dft.RKS(mol)
     mf.xc = 'b3lyp'
