@@ -72,3 +72,81 @@ def pre_sample(modes_obj, geom0, nsample, norm_bound, inc_Q0=True):
     E = np.array(E)
     
     return Q, (E - E0)*constants.eh2ev, E0
+
+def pre_sample_int(int_obj, geom0, n_sample):
+    """
+    Pre-sampling of geometries along 1D internal
+    coordinate cuts
+    """
+
+    n_internal = int_obj.n_internal
+    n_point    = n_internal * 2 * n_sample + 1
+    
+    Q  = np.zeros((n_point,n_internal), dtype=float)
+    E  = np.zeros((n_point), dtype=float)
+    E0 = 0.
+
+    # Atom labels
+    names = [geom0[i][0] for i in range(int_obj.n_atom)]
+
+    #
+    # Coordinates: 1D cuts
+    #
+    # First geometry: Q0
+    ipt = 0
+    Q[ipt,:] = int_obj.intcoord0
+    
+    # Bond lengths
+    dr = 0.05
+    for k in range(int_obj.n_bond):
+        for n in range(-n_sample,n_sample+1):
+            if n == 0:
+                continue
+            ipt      += 1
+            Q[ipt,:]  = int_obj.intcoord0
+            Q[ipt,k] += n*dr
+
+    # Angles
+    dtheta = 5.
+    shift = int_obj.n_bond
+    for k in range(int_obj.n_angle):
+        for n in range(-n_sample,n_sample+1):
+            if n == 0:
+                continue
+            ipt     += 1
+            Q[ipt,:] = int_obj.intcoord0
+            Q[ipt,k+shift] += n*dtheta
+    
+    # Dihedrals
+    dphi   = 5.
+    shift += int_obj.n_angle
+    for k in range(int_obj.n_dihedral):
+        for n in range(-n_sample,n_sample+1):
+            if n == 0:
+                continue
+            ipt     += 1
+            Q[ipt,:] = int_obj.intcoord0            
+            Q[ipt,k+shift] += n*dphi
+
+    # Energies
+    mol         = gto.Mole()
+    mol.verbose = 0
+    mol.atom    = geom0
+    mol.basis   = 'cc-pvdz'
+    mol.build()
+    mf    = dft.RKS(mol)
+    mf.xc = 'b3lyp'
+    E0    = mf.kernel()
+    
+    for ipt in range(n_point):
+        X3 = int_obj.int_to_cart(Q[ipt,:]).reshape(int_obj.n_atom,3)
+        mol.atom = [[names[i], list(X3[i,:])]
+                    for i in range(int_obj.n_atom)]
+        mol.build()
+        mf    = dft.RKS(mol)
+        mf.xc = 'b3lyp'
+        E[ipt] = mf.kernel()
+
+        print('Geom ', ipt+1, 'E (eV) = ', (E[ipt]-E0) * constants.eh2ev)
+        
+    return Q, (E - E0)*constants.eh2ev, E0

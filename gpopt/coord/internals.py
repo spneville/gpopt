@@ -146,3 +146,33 @@ class Internals():
             n -= self.zmat0['d'].tolist().count(axis)
 
         return n
+
+    def get_bounds(self):
+        """
+        Returns sensible internal coordinate bounds
+        *** Rough first pass ***
+        """
+
+        bounds = np.zeros((self.n_internal,2), dtype=float)
+
+        # Bonds
+        for i in range(self.n_bond):
+            bounds[i,0] = 0.5
+            bounds[i,1] = 1.5
+
+        # Angles
+        shift = self.n_bond
+        for i in range(self.n_angle):
+            bounds[i+shift,0] = 0.
+            bounds[i+shift,1] = 180.
+
+        # Dihedrals
+        # N.B. these bounds look odd because of
+        # how the ChemCoord library handles dihedrals
+        # i.e., a dihedral of <180 is parsable
+        shift += self.n_angle
+        for i in range(self.n_dihedral):
+            bounds[i+shift,0] = -200.
+            bounds[i+shift,1] = 90.
+        
+        return bounds
